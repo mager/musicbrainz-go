@@ -22,7 +22,14 @@ func main() {
 	client.Log.Infow("Fetched recording", "ID", r.ID, "Title", r.Title)
 	if r.Relations != nil && len(*r.Relations) > 0 {
 		for _, rel := range *r.Relations {
-			client.Log.Infow("Recording relation", "Type", rel.Type, "Attributes", rel.Attributes)
+			if len(rel.Attributes) > 0 && rel.Artist != nil {
+				client.Log.Infow(
+					"Recording relation",
+					"Type", rel.Type,
+					"Attributes", rel.Attributes,
+					"Artist", rel.Artist,
+				)
+			}
 		}
 	}
 }

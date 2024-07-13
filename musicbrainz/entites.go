@@ -8,6 +8,13 @@ type Includes []Include
 type ArtistRelation struct {
 	Type       string                    `json:"type"`
 	Attributes []ArtistRelationAttribute `json:"attributes"`
+	Artist     *ArtistRelationArtist     `json:"artist"`
+}
+
+type ArtistRelationArtist struct {
+	ID             string `json:"id"`
+	Name           string `json:"name"`
+	Disambiguation string `json:"disambiguation"`
 }
 
 type ArtistRelationAttribute string
