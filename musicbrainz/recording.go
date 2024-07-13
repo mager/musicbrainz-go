@@ -65,6 +65,9 @@ func (c *MusicbrainzClient) GetRecording(req GetRecordingRequest) (GetRecordingR
 	if IncludesContains(req.Includes, "artist-rels") {
 		q.Add("inc", "artist-rels")
 	}
+	if IncludesContains(req.Includes, "genres") {
+		q.Add("inc", "genres")
+	}
 	u.RawQuery = q.Encode()
 
 	// Make the request
