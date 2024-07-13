@@ -8,15 +8,18 @@ func main() {
 	// Create a new client
 	client := mb.NewMusicbrainzClient()
 
-	// Get Recording
+	// Search Recordings by ISRC
 	isrc := "USUM72401991"
-	c, err := client.SearchRecordingsByISRC(isrc)
+	req := mb.SearchRecordingsByISRCRequest{
+		ISRC: isrc,
+	}
+	c, err := client.SearchRecordingsByISRC(req)
 	if err != nil {
-		client.Log.Errorw("Error fetching recording", "isrc", isrc)
+		client.Log.Errorw("Error searching recordings", "isrc", isrc)
 	}
 
 	// Loop through recordings and print the ID
 	for _, recording := range c.Recordings {
-		client.Log.Infow("Fetched recording", "ID", recording.ID)
+		client.Log.Infow("Found recording", "ID", recording.ID)
 	}
 }
