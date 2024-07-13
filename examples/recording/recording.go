@@ -1,22 +1,22 @@
 package main
 
 import (
-	mb "github.com/mager/musicbrainz-go"
+	mb "github.com/mager/musicbrainz-go/musicbrainz"
 )
 
 func main() {
 	// Create a new client
-	client := mb.NewMusicBrainzClient()
+	client := mb.NewMusicbrainzClient()
 
 	// Get Recording
 	isrc := "USUM72401991"
 	c, err := client.SearchRecordingsByISRC(isrc)
 	if err != nil {
-		// TODO: Handle error
+		client.Log.Errorw("Error fetching recording", "isrc", isrc)
 	}
 
 	// Loop through recordings and print the ID
-	for _, recording := range c.recordings {
-		client.Log.Infow("Fetched recording", "name", recording.ID)
+	for _, recording := range c.Recordings {
+		client.Log.Infow("Fetched recording", "ID", recording.ID)
 	}
 }

@@ -24,7 +24,7 @@ func NewMusicbrainzClient() *MusicbrainzClient {
 	return &MusicbrainzClient{
 		Log: logger.Sugar(),
 
-		baseURL: "https://musicbrainz.com/ws/2/",
+		baseURL: "https://musicbrainz.org/ws/2",
 		client: &http.Client{
 			Timeout: time.Second * 10,
 		},

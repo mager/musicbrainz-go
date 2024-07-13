@@ -7,8 +7,8 @@ import (
 )
 
 type SearchRecordingsByISRCResponse struct {
-	Count      int
-	Recordings []Recording
+	Count      int         `json:"count"`
+	Recordings []Recording `json:"recordings"`
 }
 
 func (c *MusicbrainzClient) SearchRecordingsByISRC(isrc string) (SearchRecordingsByISRCResponse, error) {
