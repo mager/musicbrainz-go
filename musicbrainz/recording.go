@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/url"
+	"strings"
 )
 
 type SearchRecordingsByISRCRequest struct {
@@ -62,11 +63,15 @@ func (c *MusicbrainzClient) GetRecording(req GetRecordingRequest) (GetRecordingR
 	u, _ := url.Parse(fmt.Sprintf("%s/recording/%s", c.baseURL, req.ID))
 	q := u.Query()
 	q.Add("fmt", "json")
+	incs := make([]string, 0)
 	if IncludesContains(req.Includes, "artist-rels") {
-		q.Add("inc", "artist-rels")
+		incs = append(incs, "artist-rels")
 	}
 	if IncludesContains(req.Includes, "genres") {
-		q.Add("inc", "genres")
+		incs = append(incs, "genres")
+	}
+	if len(incs) > 0 {
+		q.Add("inc", strings.Join(incs, "+"))
 	}
 	u.RawQuery = q.Encode()
 

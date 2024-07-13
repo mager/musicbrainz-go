@@ -8,12 +8,13 @@ func main() {
 	// Create a new client
 	client := mb.NewMusicbrainzClient()
 
-	// Get Recording
-	ID := "13f11191-f67a-4f35-8b58-62410b13d6cb"
+	// Metallica - One
+	ID := "56d2735d-abc7-4070-9c3f-bc27593d922d"
 	req := mb.GetRecordingRequest{
 		ID:       ID,
-		Includes: []mb.Include{"artist-rels"},
+		Includes: []mb.Include{"artist-rels", "genres"},
 	}
+	// Get Recording
 	r, err := client.GetRecording(req)
 	if err != nil {
 		client.Log.Errorw("Error fetching recording", "id", ID)
@@ -30,6 +31,17 @@ func main() {
 					"Artist", rel.Artist,
 				)
 			}
+		}
+	}
+
+	if r.Genres != nil && len(*r.Genres) > 0 {
+		for _, genre := range *r.Genres {
+			client.Log.Infow(
+				"Recording genre",
+				"ID", genre.ID,
+				"Count", genre.Count,
+				"Name", genre.Name,
+			)
 		}
 	}
 }
