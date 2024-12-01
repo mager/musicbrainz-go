@@ -3,6 +3,8 @@ package musicbrainz
 import (
 	"encoding/json"
 	"fmt"
+	"log"
+	"net/http"
 	"net/url"
 	"strings"
 )
@@ -94,4 +96,54 @@ func (c *MusicbrainzClient) GetRecording(req GetRecordingRequest) (GetRecordingR
 
 	// Log response body
 	return resp, err
+}
+
+// SearchRecordingsByArtistAndTrack searches for recordings by artist and track title.
+type SearchRecordingsByArtistAndTrackRequest struct {
+	Artist string `json:"artist"`
+	Track  string `json:"track"`
+}
+
+type SearchRecordingsByArtistAndTrackResponse struct {
+	Count      int         `json:"count"`
+	Recordings []Recording `json:"recordings"`
+}
+
+func (c *MusicbrainzClient) SearchRecordingsByArtistAndTrack(req SearchRecordingsByArtistAndTrackRequest) (SearchRecordingsByArtistAndTrackResponse, error) {
+	var resp SearchRecordingsByArtistAndTrackResponse
+
+	// Construct the search query:
+	query := fmt.Sprintf("artist:%s AND recording:%s", url.QueryEscape(req.Artist), url.QueryEscape(req.Track))
+
+	u, err := url.Parse(fmt.Sprintf("%s/recording", c.baseURL))
+	if err != nil {
+		log.Printf("Error parsing URL: %v", err)
+		return resp, fmt.Errorf("error parsing URL: %w", err)
+	}
+
+	q := u.Query()
+	q.Add("fmt", "json")
+	q.Add("query", query)
+	u.RawQuery = q.Encode()
+
+	// Make the request
+	httpResp, err := c.Get(u)
+	if err != nil {
+		log.Printf("Error getting recordings: %v", err)
+		return resp, fmt.Errorf("error getting recordings: %w", err)
+	}
+	defer httpResp.Body.Close()
+
+	if httpResp.StatusCode != http.StatusOK {
+		log.Printf("MusicBrainz API returned status code: %d", httpResp.StatusCode)
+		return resp, fmt.Errorf("MusicBrainz API returned status code %d", httpResp.StatusCode)
+	}
+
+	err = json.NewDecoder(httpResp.Body).Decode(&resp)
+	if err != nil {
+		log.Printf("Error decoding recordings: %v", err)
+		return resp, fmt.Errorf("error decoding recordings: %w", err)
+	}
+
+	return resp, nil
 }
