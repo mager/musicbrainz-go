@@ -1,6 +1,6 @@
 package musicbrainz
 
-// area, artist, event, genre, instrument, label, place, recording, release, release-group, series, work, url
+// area, artist, event, genre, instrument, label, place, recording, release, release-group, series, url
 
 type Include string
 type Includes []Include
@@ -32,4 +32,10 @@ type Recording struct {
 
 type RecordingWithArtistRelations struct {
 	Recording
+}
+
+type Work struct {
+	ID        string            `json:"id"`
+	Title     string            `json:"title"`
+	Relations *[]ArtistRelation `json:"relations,omitempty"`
 }
