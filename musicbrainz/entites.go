@@ -11,23 +11,31 @@ type Genre struct {
 	Name  string `json:"name"`
 }
 
-type ArtistRelation struct {
-	Type       string                `json:"type"`
-	Attributes []string              `json:"attributes"`
-	Artist     *ArtistRelationArtist `json:"artist"`
+type Relation struct {
+	Type       string          `json:"type"`
+	Attributes []string        `json:"attributes"`
+	TargetType string          `json:"target-type"`
+	Artist     *RelationArtist `json:"artist,omitempty"`
+	Work       *RelationWork   `json:"work,omitempty"`
 }
 
-type ArtistRelationArtist struct {
+type RelationArtist struct {
 	ID             string `json:"id"`
 	Name           string `json:"name"`
 	Disambiguation string `json:"disambiguation"`
 }
 
+type RelationWork struct {
+	ID             string `json:"id"`
+	Title          string `json:"title"`
+	Disambiguation string `json:"disambiguation"`
+}
+
 type Recording struct {
-	ID        string            `json:"id"`
-	Title     string            `json:"title"`
-	Relations *[]ArtistRelation `json:"relations,omitempty"`
-	Genres    *[]Genre          `json:"genres,omitempty"`
+	ID        string      `json:"id"`
+	Title     string      `json:"title"`
+	Relations *[]Relation `json:"relations,omitempty"`
+	Genres    *[]Genre    `json:"genres,omitempty"`
 }
 
 type RecordingWithArtistRelations struct {
@@ -35,7 +43,7 @@ type RecordingWithArtistRelations struct {
 }
 
 type Work struct {
-	ID        string            `json:"id"`
-	Title     string            `json:"title"`
-	Relations *[]ArtistRelation `json:"relations,omitempty"`
+	ID        string      `json:"id"`
+	Title     string      `json:"title"`
+	Relations *[]Relation `json:"relations,omitempty"`
 }

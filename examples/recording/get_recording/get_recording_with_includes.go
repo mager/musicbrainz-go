@@ -8,11 +8,15 @@ func main() {
 	// Create a new client
 	client := mb.NewMusicbrainzClient()
 
-	// Metallica - One
-	ID := "56d2735d-abc7-4070-9c3f-bc27593d922d"
+	// Kendrick Lamar - squabble up
+	ID := "451690ff-5d48-4724-bd69-56951dbbf733"
 	req := mb.GetRecordingRequest{
-		ID:       ID,
-		Includes: []mb.Include{"artist-rels", "genres"},
+		ID: ID,
+		Includes: []mb.Include{
+			"artist-rels",
+			"genres",
+			"work-rels",
+		},
 	}
 	// Get Recording
 	r, err := client.GetRecording(req)
@@ -23,17 +27,22 @@ func main() {
 	client.Log.Infow("Fetched recording", "ID", r.ID, "Title", r.Title)
 	if r.Relations != nil && len(*r.Relations) > 0 {
 		for _, rel := range *r.Relations {
-			if len(rel.Attributes) > 0 && rel.Artist != nil {
-				client.Log.Infow(
-					"Recording relation",
-					"Type", rel.Type,
-					"Attributes", rel.Attributes,
-					"Artist", rel.Artist,
-				)
+			fields := []interface{}{
+				"Target Type", rel.TargetType,
+				"Type", rel.Type,
+				"Attributes", rel.Attributes,
 			}
+
+			if rel.Artist != nil {
+				fields = append(fields, "Artist", rel.Artist)
+			}
+			if rel.Work != nil {
+				fields = append(fields, "Work", rel.Work)
+			}
+
+			client.Log.Infow("Recording relation", fields...)
 		}
 	}
-
 	if r.Genres != nil && len(*r.Genres) > 0 {
 		for _, genre := range *r.Genres {
 			client.Log.Infow(

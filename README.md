@@ -6,6 +6,5 @@ https://github.com/mager/musicbrainz-go
 
 ```
 git tag v0.0.x
-git tag push origin v0.0.x
 git push --tags
 ```

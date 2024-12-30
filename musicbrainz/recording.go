@@ -72,6 +72,9 @@ func (c *MusicbrainzClient) GetRecording(req GetRecordingRequest) (GetRecordingR
 	if IncludesContains(req.Includes, "genres") {
 		incs = append(incs, "genres")
 	}
+	if IncludesContains(req.Includes, "work-rels") {
+		incs = append(incs, "work-rels")
+	}
 	if len(incs) > 0 {
 		q.Add("inc", strings.Join(incs, "+"))
 	}

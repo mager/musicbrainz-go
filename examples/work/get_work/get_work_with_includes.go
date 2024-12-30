@@ -23,14 +23,20 @@ func main() {
 	client.Log.Infow("Fetched work", "ID", r.ID, "Title", r.Title)
 	if r.Relations != nil && len(*r.Relations) > 0 {
 		for _, rel := range *r.Relations {
-			if len(rel.Attributes) > 0 && rel.Artist != nil {
-				client.Log.Infow(
-					"Recording relation",
-					"Type", rel.Type,
-					"Attributes", rel.Attributes,
-					"Artist", rel.Artist,
-				)
+			fields := []interface{}{
+				"Target Type", rel.TargetType,
+				"Type", rel.Type,
+				"Attributes", rel.Attributes,
 			}
+
+			if rel.Artist != nil {
+				fields = append(fields, "Artist", rel.Artist)
+			}
+			if rel.Work != nil {
+				fields = append(fields, "Work", rel.Work)
+			}
+
+			client.Log.Infow("Work relation", fields...)
 		}
 	}
 }
