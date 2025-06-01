@@ -13,6 +13,7 @@ func main() {
 	req := mb.GetRecordingRequest{
 		ID: ID,
 		Includes: []mb.Include{
+			"artist-credits",
 			"artist-rels",
 			"genres",
 			"work-rels",
@@ -51,6 +52,11 @@ func main() {
 				"Count", genre.Count,
 				"Name", genre.Name,
 			)
+		}
+	}
+	if r.ArtistCredits != nil && len(*r.ArtistCredits) > 0 {
+		for _, credit := range *r.ArtistCredits {
+			client.Log.Infow("Recording artist credit", "Artist", credit.Artist, "Name", credit.Name)
 		}
 	}
 }

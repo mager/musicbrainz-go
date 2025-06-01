@@ -69,6 +69,9 @@ func (c *MusicbrainzClient) GetRecording(req GetRecordingRequest) (GetRecordingR
 	if IncludesContains(req.Includes, "artist-rels") {
 		incs = append(incs, "artist-rels")
 	}
+	if IncludesContains(req.Includes, "artist-credits") {
+		incs = append(incs, "artist-credits")
+	}
 	if IncludesContains(req.Includes, "genres") {
 		incs = append(incs, "genres")
 	}
@@ -79,6 +82,9 @@ func (c *MusicbrainzClient) GetRecording(req GetRecordingRequest) (GetRecordingR
 		q.Add("inc", strings.Join(incs, "+"))
 	}
 	u.RawQuery = q.Encode()
+
+	// Log the full URL
+	c.Log.Infof("Making request to URL: %s", u.String())
 
 	// Make the request
 	httpResp, err := c.Get(u)
