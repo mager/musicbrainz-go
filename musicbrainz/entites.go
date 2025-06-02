@@ -50,6 +50,7 @@ type Work struct {
 }
 
 type ArtistCredit struct {
-	Artist *RelationArtist `json:"artist,omitempty"`
-	Name   string          `json:"name"`
+	Artist     *RelationArtist `json:"artist,omitempty"`
+	Name       string          `json:"name"`
+	JoinPhrase string          `json:"joinphrase,omitempty"`
 }
