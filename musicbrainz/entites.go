@@ -32,11 +32,12 @@ type RelationWork struct {
 }
 
 type Recording struct {
-	ID            string          `json:"id"`
-	Title         string          `json:"title"`
-	Relations     *[]Relation     `json:"relations,omitempty"`
-	Genres        *[]Genre        `json:"genres,omitempty"`
-	ArtistCredits *[]ArtistCredit `json:"artist-credit,omitempty"`
+	ID               string          `json:"id"`
+	Title            string          `json:"title"`
+	Relations        *[]Relation     `json:"relations,omitempty"`
+	Genres           *[]Genre        `json:"genres,omitempty"`
+	ArtistCredits    *[]ArtistCredit `json:"artist-credit,omitempty"`
+	FirstReleaseDate string          `json:"first-release-date,omitempty"`
 }
 
 type RecordingWithArtistRelations struct {

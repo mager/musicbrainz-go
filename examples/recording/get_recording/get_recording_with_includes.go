@@ -56,7 +56,9 @@ func main() {
 	}
 	if r.ArtistCredits != nil && len(*r.ArtistCredits) > 0 {
 		for _, credit := range *r.ArtistCredits {
-			client.Log.Infow("Recording artist credit", "Artist", credit.Artist, "Name", credit.Name)
+			client.Log.Infow("Recording artist credit", "Artist", credit.Artist, "Name", credit.Name, "JoinPhrase", credit.JoinPhrase)
 		}
 	}
+
+	client.Log.Infow("Recording first release date", "Date", r.FirstReleaseDate)
 }
