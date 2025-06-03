@@ -17,6 +17,7 @@ func main() {
 			"artist-rels",
 			"genres",
 			"work-rels",
+			"releases",
 		},
 	}
 	// Get Recording
@@ -61,4 +62,10 @@ func main() {
 	}
 
 	client.Log.Infow("Recording first release date", "Date", r.FirstReleaseDate)
+
+	if r.Releases != nil && len(*r.Releases) > 0 {
+		for _, release := range *r.Releases {
+			client.Log.Infow("Recording release", "ID", release.ID, "Title", release.Title, "Date", release.Date, "Country", release.Country)
+		}
+	}
 }

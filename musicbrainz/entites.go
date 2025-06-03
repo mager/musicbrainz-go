@@ -38,6 +38,7 @@ type Recording struct {
 	Genres           *[]Genre        `json:"genres,omitempty"`
 	ArtistCredits    *[]ArtistCredit `json:"artist-credit,omitempty"`
 	FirstReleaseDate string          `json:"first-release-date,omitempty"`
+	Releases         *[]Release      `json:"releases,omitempty"`
 }
 
 type RecordingWithArtistRelations struct {
@@ -54,4 +55,11 @@ type ArtistCredit struct {
 	Artist     *RelationArtist `json:"artist,omitempty"`
 	Name       string          `json:"name"`
 	JoinPhrase string          `json:"joinphrase,omitempty"`
+}
+
+type Release struct {
+	ID      string `json:"id"`
+	Title   string `json:"title"`
+	Date    string `json:"date"`
+	Country string `json:"country"`
 }
