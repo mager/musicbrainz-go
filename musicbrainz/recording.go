@@ -3,7 +3,7 @@ package musicbrainz
 import (
 	"encoding/json"
 	"fmt"
-	"log"
+	"io"
 	"net/http"
 	"net/url"
 	"strings"
@@ -124,36 +124,43 @@ type SearchRecordingsByArtistAndTrackResponse struct {
 func (c *MusicbrainzClient) SearchRecordingsByArtistAndTrack(req SearchRecordingsByArtistAndTrackRequest) (SearchRecordingsByArtistAndTrackResponse, error) {
 	var resp SearchRecordingsByArtistAndTrackResponse
 
-	// Construct the search query:
-	query := fmt.Sprintf("artist:%s AND recording:%s", url.QueryEscape(req.Artist), url.QueryEscape(req.Track))
+	// Construct the search query with phrase quoting.
+	query := fmt.Sprintf("artist:\"%s\" AND recording:\"%s\"", req.Artist, req.Track)
 
 	u, err := url.Parse(fmt.Sprintf("%s/recording", c.baseURL))
 	if err != nil {
-		log.Printf("Error parsing URL: %v", err)
+		c.Log.Errorf("Error parsing URL for recording search: %v", err)
 		return resp, fmt.Errorf("error parsing URL: %w", err)
 	}
 
 	q := u.Query()
 	q.Add("fmt", "json")
 	q.Add("query", query)
+	q.Add("limit", "25")
 	u.RawQuery = q.Encode()
 
-	// Make the request
 	httpResp, err := c.Get(u)
 	if err != nil {
-		log.Printf("Error getting recordings: %v", err)
+		c.Log.Errorf("Error making HTTP request to MusicBrainz: %v", err)
 		return resp, fmt.Errorf("error getting recordings: %w", err)
 	}
 	defer httpResp.Body.Close()
 
 	if httpResp.StatusCode != http.StatusOK {
-		log.Printf("MusicBrainz API returned status code: %d", httpResp.StatusCode)
-		return resp, fmt.Errorf("MusicBrainz API returned status code %d", httpResp.StatusCode)
+		c.Log.Infof("MusicBrainz API returned status code: %d for ArtistAndTrack search", httpResp.StatusCode) // Clarified log message
+
+		bodyBytes, readErr := io.ReadAll(httpResp.Body)
+		if readErr != nil {
+			c.Log.Errorf("Error reading error response body from MusicBrainz: %v", readErr)
+		}
+		errMsg := fmt.Sprintf("MusicBrainz API returned non-OK status: %d. Response: %s", httpResp.StatusCode, string(bodyBytes))
+		c.Log.Errorf(errMsg)
+		return resp, fmt.Errorf("%s", errMsg)
 	}
 
 	err = json.NewDecoder(httpResp.Body).Decode(&resp)
 	if err != nil {
-		log.Printf("Error decoding recordings: %v", err)
+		c.Log.Errorf("Error decoding MusicBrainz recording search response: %v", err)
 		return resp, fmt.Errorf("error decoding recordings: %w", err)
 	}
 

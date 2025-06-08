@@ -2,9 +2,12 @@
 
 https://github.com/mager/musicbrainz-go
 
+_A super minimal MusicBrainz library to power beatbrain.xyz_
+
 ## Development
 
+Ship a new version:
+
 ```
-git tag v0.0.x
-git push --tags
+make publish
 ```

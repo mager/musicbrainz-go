@@ -12,8 +12,8 @@ func main() {
 	client := mb.NewMusicbrainzClient()
 
 	// Search for recordings
-	artist := "The Beatles"
-	track := "Hey Jude"
+	artist := "sombr"
+	track := "Back To Friends"
 	req := mb.SearchRecordingsByArtistAndTrackRequest{
 		Artist: artist,
 		Track:  track,

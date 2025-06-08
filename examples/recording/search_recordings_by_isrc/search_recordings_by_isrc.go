@@ -9,7 +9,7 @@ func main() {
 	client := mb.NewMusicbrainzClient()
 
 	// Search Recordings by ISRC
-	isrc := "USUM72401991"
+	isrc := "QZJ842501811"
 	req := mb.SearchRecordingsByISRCRequest{
 		ISRC: isrc,
 	}
