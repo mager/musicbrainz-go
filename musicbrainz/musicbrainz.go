@@ -1,6 +1,7 @@
 package musicbrainz
 
 import (
+	"fmt"
 	"net/http"
 	"net/url"
 	"time"
@@ -15,6 +16,11 @@ type MusicbrainzClient struct {
 	client       *http.Client
 	baseURL      string
 	requestDelay time.Duration
+
+	// User agent configuration
+	appName string
+	version string
+	github  string
 }
 
 // NewMusicbrainzClient creates a new Musicbrainz client with configuration.
@@ -29,7 +35,20 @@ func NewMusicbrainzClient() *MusicbrainzClient {
 			Timeout: time.Second * 10,
 		},
 		requestDelay: time.Millisecond * 250,
+
+		// Default values
+		appName: "musicbrainz-go",
+		version: "0.0.14",
+		github:  "https://github.com/mager/musicbrainz-go",
 	}
+}
+
+// WithUserAgent configures the user agent for the client.
+func (c *MusicbrainzClient) WithUserAgent(appName, version, github string) *MusicbrainzClient {
+	c.appName = appName
+	c.version = version
+	c.github = github
+	return c
 }
 
 // NewRequest creates a new request and adds authentication headers.
@@ -37,6 +56,8 @@ func (c *MusicbrainzClient) GetRequest(u *url.URL) *http.Request {
 	req, _ := http.NewRequest("GET", u.String(), nil)
 
 	req.Header.Set("Content-Type", "application/json")
+	userAgent := fmt.Sprintf("%s/%s ( %s )", c.appName, c.version, c.github)
+	req.Header.Set("User-Agent", userAgent)
 
 	return req
 }
