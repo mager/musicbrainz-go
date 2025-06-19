@@ -8,8 +8,8 @@ func main() {
 	// Create a new client
 	client := mb.NewMusicbrainzClient()
 
-	// Kendrick Lamar - squabble up
-	ID := "451690ff-5d48-4724-bd69-56951dbbf733"
+	// Sabrina Carpenter - Manchild
+	ID := "b40bca50-273f-488f-811c-a37857916c3f"
 	req := mb.GetRecordingRequest{
 		ID: ID,
 		Includes: []mb.Include{
@@ -18,6 +18,7 @@ func main() {
 			"genres",
 			"work-rels",
 			"releases",
+			"url-rels",
 		},
 	}
 	// Get Recording
@@ -40,6 +41,10 @@ func main() {
 			}
 			if rel.Work != nil {
 				fields = append(fields, "Work", rel.Work)
+			}
+
+			if rel.TargetType == "url" {
+				fields = append(fields, "URL ID", rel.URL.ID, "Resource", rel.URL.Resource)
 			}
 
 			client.Log.Infow("Recording relation", fields...)
@@ -68,4 +73,5 @@ func main() {
 			client.Log.Infow("Recording release", "ID", release.ID, "Title", release.Title, "Date", release.Date, "Country", release.Country)
 		}
 	}
+
 }

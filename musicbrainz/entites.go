@@ -17,6 +17,12 @@ type Relation struct {
 	TargetType string          `json:"target-type"`
 	Artist     *RelationArtist `json:"artist,omitempty"`
 	Work       *RelationWork   `json:"work,omitempty"`
+	URL        URL             `json:"url,omitempty"`
+}
+
+type URL struct {
+	ID       string `json:"id"`
+	Resource string `json:"resource"`
 }
 
 type RelationArtist struct {

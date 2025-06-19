@@ -81,6 +81,9 @@ func (c *MusicbrainzClient) GetRecording(req GetRecordingRequest) (GetRecordingR
 	if IncludesContains(req.Includes, "releases") {
 		incs = append(incs, "releases")
 	}
+	if IncludesContains(req.Includes, "url-rels") {
+		incs = append(incs, "url-rels")
+	}
 	if len(incs) > 0 {
 		q.Add("inc", strings.Join(incs, "+"))
 	}
