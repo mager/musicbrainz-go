@@ -61,6 +61,7 @@ type ArtistCredit struct {
 	Artist     *RelationArtist `json:"artist,omitempty"`
 	Name       string          `json:"name"`
 	JoinPhrase string          `json:"joinphrase,omitempty"`
+	Genres     *[]Genre        `json:"genres,omitempty"`
 }
 
 type Release struct {
