@@ -26,9 +26,10 @@ type URL struct {
 }
 
 type RelationArtist struct {
-	ID             string `json:"id"`
-	Name           string `json:"name"`
-	Disambiguation string `json:"disambiguation"`
+	ID             string   `json:"id"`
+	Name           string   `json:"name"`
+	Disambiguation string   `json:"disambiguation"`
+	Genres         *[]Genre `json:"genres,omitempty"`
 }
 
 type RelationWork struct {
@@ -61,7 +62,6 @@ type ArtistCredit struct {
 	Artist     *RelationArtist `json:"artist,omitempty"`
 	Name       string          `json:"name"`
 	JoinPhrase string          `json:"joinphrase,omitempty"`
-	Genres     *[]Genre        `json:"genres,omitempty"`
 }
 
 type Release struct {

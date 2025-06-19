@@ -28,6 +28,8 @@ func (c *MusicbrainzClient) SearchRecordingsByISRC(req SearchRecordingsByISRCReq
 	q.Add("query", fmt.Sprintf("isrc:%s", req.ISRC))
 	u.RawQuery = q.Encode()
 
+	c.Log.Debugf("Making request to URL: %s", u.String())
+
 	// Make the request
 	httpResp, err := c.Get(u)
 
@@ -38,7 +40,13 @@ func (c *MusicbrainzClient) SearchRecordingsByISRC(req SearchRecordingsByISRCReq
 	}
 
 	defer httpResp.Body.Close()
-	err = json.NewDecoder(httpResp.Body).Decode(&resp)
+	bodyBytes, readErr := io.ReadAll(httpResp.Body)
+	if readErr != nil {
+		c.Log.Errorf("Error reading response body: %s", readErr)
+		return resp, readErr
+	}
+	c.Log.Debugf("Response body: %s", string(bodyBytes))
+	err = json.NewDecoder(strings.NewReader(string(bodyBytes))).Decode(&resp)
 	// TODO: Test
 	if err != nil {
 		c.Log.Errorf("Error decoding recordings: %s", err)
@@ -90,7 +98,7 @@ func (c *MusicbrainzClient) GetRecording(req GetRecordingRequest) (GetRecordingR
 	u.RawQuery = q.Encode()
 
 	// Log the full URL
-	c.Log.Infof("Making request to URL: %s", u.String())
+	c.Log.Debugf("Making request to URL: %s", u.String())
 
 	// Make the request
 	httpResp, err := c.Get(u)
@@ -102,8 +110,13 @@ func (c *MusicbrainzClient) GetRecording(req GetRecordingRequest) (GetRecordingR
 	}
 
 	defer httpResp.Body.Close()
-	err = json.NewDecoder(httpResp.Body).Decode(&resp)
-	// TODO: Test
+	bodyBytes, readErr := io.ReadAll(httpResp.Body)
+	if readErr != nil {
+		c.Log.Errorf("Error reading response body: %s", readErr)
+		return resp, readErr
+	}
+	c.Log.Debugf("Response body: %s", string(bodyBytes))
+	err = json.NewDecoder(strings.NewReader(string(bodyBytes))).Decode(&resp)
 	if err != nil {
 		c.Log.Errorf("Error decoding recording: %s", err)
 		return resp, err
@@ -126,6 +139,7 @@ type SearchRecordingsByArtistAndTrackResponse struct {
 
 func (c *MusicbrainzClient) SearchRecordingsByArtistAndTrack(req SearchRecordingsByArtistAndTrackRequest) (SearchRecordingsByArtistAndTrackResponse, error) {
 	var resp SearchRecordingsByArtistAndTrackResponse
+	var err error
 
 	// Construct the search query with phrase quoting.
 	query := fmt.Sprintf("artist:\"%s\" AND recording:\"%s\"", req.Artist, req.Track)
@@ -142,12 +156,25 @@ func (c *MusicbrainzClient) SearchRecordingsByArtistAndTrack(req SearchRecording
 	q.Add("limit", "25")
 	u.RawQuery = q.Encode()
 
+	c.Log.Debugf("Making request to URL: %s", u.String())
+
 	httpResp, err := c.Get(u)
 	if err != nil {
 		c.Log.Errorf("Error making HTTP request to MusicBrainz: %v", err)
 		return resp, fmt.Errorf("error getting recordings: %w", err)
 	}
 	defer httpResp.Body.Close()
+	bodyBytes, readErr := io.ReadAll(httpResp.Body)
+	if readErr != nil {
+		c.Log.Errorf("Error reading response body: %s", readErr)
+		return resp, readErr
+	}
+	c.Log.Debugf("Response body: %s", string(bodyBytes))
+	err = json.NewDecoder(strings.NewReader(string(bodyBytes))).Decode(&resp)
+	if err != nil {
+		c.Log.Errorf("Error decoding recordings: %s", err)
+		return resp, err
+	}
 
 	if httpResp.StatusCode != http.StatusOK {
 		c.Log.Infof("MusicBrainz API returned status code: %d for ArtistAndTrack search", httpResp.StatusCode) // Clarified log message
