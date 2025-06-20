@@ -77,6 +77,7 @@ func main() {
 				"Date", release.Date,
 				"Country", release.Country,
 				"Disambiguation", release.Disambiguation,
+				"Status", release.Status,
 			)
 		}
 	}

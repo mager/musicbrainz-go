@@ -6,4 +6,5 @@ type Release struct {
 	Date           string `json:"date"`
 	Country        string `json:"country"`
 	Disambiguation string `json:"disambiguation"`
+	Status         string `json:"status"`
 }
