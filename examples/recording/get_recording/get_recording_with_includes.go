@@ -70,7 +70,14 @@ func main() {
 
 	if r.Releases != nil && len(*r.Releases) > 0 {
 		for _, release := range *r.Releases {
-			client.Log.Infow("Recording release", "ID", release.ID, "Title", release.Title, "Date", release.Date, "Country", release.Country)
+			client.Log.Infow(
+				"Recording release",
+				"ID", release.ID,
+				"Title", release.Title,
+				"Date", release.Date,
+				"Country", release.Country,
+				"Disambiguation", release.Disambiguation,
+			)
 		}
 	}
 
