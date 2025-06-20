@@ -13,6 +13,12 @@ type GetWorkRequest struct {
 	ID       string   `json:"id"`
 }
 
+type Work struct {
+	ID        string      `json:"id"`
+	Title     string      `json:"title"`
+	Relations *[]Relation `json:"relations,omitempty"`
+}
+
 type GetWorkResponse struct {
 	Work
 }

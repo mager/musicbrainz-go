@@ -9,6 +9,20 @@ import (
 	"strings"
 )
 
+type Recording struct {
+	ID               string          `json:"id"`
+	Title            string          `json:"title"`
+	Relations        *[]Relation     `json:"relations,omitempty"`
+	Genres           *[]Genre        `json:"genres,omitempty"`
+	ArtistCredits    *[]ArtistCredit `json:"artist-credit,omitempty"`
+	FirstReleaseDate string          `json:"first-release-date,omitempty"`
+	Releases         *[]Release      `json:"releases,omitempty"`
+}
+
+type RecordingWithArtistRelations struct {
+	Recording
+}
+
 type SearchRecordingsByISRCRequest struct {
 	ISRC string `json:"isrc"`
 }

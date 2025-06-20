@@ -1,0 +1,8 @@
+package musicbrainz
+
+type Release struct {
+	ID      string `json:"id"`
+	Title   string `json:"title"`
+	Date    string `json:"date"`
+	Country string `json:"country"`
+}
