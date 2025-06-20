@@ -78,6 +78,7 @@ func main() {
 				"Country", release.Country,
 				"Disambiguation", release.Disambiguation,
 				"Status", release.Status,
+				"Packaging", release.Packaging,
 			)
 		}
 	}
