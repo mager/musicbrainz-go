@@ -14,6 +14,7 @@ type RelationArtist struct {
 	Name           string   `json:"name"`
 	Disambiguation string   `json:"disambiguation"`
 	Genres         *[]Genre `json:"genres,omitempty"`
+	JoinPhrase     string   `json:"joinphrase"`
 }
 
 type RelationWork struct {
