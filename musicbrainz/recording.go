@@ -17,6 +17,7 @@ type Recording struct {
 	ArtistCredits    *[]ArtistCredit `json:"artist-credit,omitempty"`
 	FirstReleaseDate string          `json:"first-release-date,omitempty"`
 	Releases         *[]Release      `json:"releases,omitempty"`
+	ISRCs            *[]string       `json:"isrcs,omitempty"`
 }
 
 type RecordingWithArtistRelations struct {
@@ -206,6 +207,91 @@ func (c *MusicbrainzClient) SearchRecordingsByArtistAndTrack(req SearchRecording
 	if err != nil {
 		c.Log.Errorf("Error decoding MusicBrainz recording search response: %v", err)
 		return resp, fmt.Errorf("error decoding recordings: %w", err)
+	}
+
+	return resp, nil
+}
+
+// SearchRecordingsByBulkISRC searches for multiple recordings by ISRC in a single request
+type SearchRecordingsByBulkISRCRequest struct {
+	ISRCs []string `json:"isrcs"`
+}
+
+type SearchRecordingsByBulkISRCResponse struct {
+	Count      int                    `json:"count"`
+	Recordings []Recording            `json:"recordings"`
+	ISRCMap    map[string][]Recording `json:"isrc_map"` // Maps ISRC to recordings
+}
+
+func (c *MusicbrainzClient) SearchRecordingsByBulkISRC(req SearchRecordingsByBulkISRCRequest) (SearchRecordingsByBulkISRCResponse, error) {
+	var resp SearchRecordingsByBulkISRCResponse
+	resp.ISRCMap = make(map[string][]Recording)
+
+	if len(req.ISRCs) == 0 {
+		return resp, nil
+	}
+
+	// Build OR query for multiple ISRCs
+	var isrcQueries []string
+	for _, isrc := range req.ISRCs {
+		if isrc != "" {
+			isrcQueries = append(isrcQueries, fmt.Sprintf("isrc:%s", isrc))
+		}
+	}
+
+	if len(isrcQueries) == 0 {
+		return resp, nil
+	}
+
+	// Create OR query: isrc:(ISRC1 OR ISRC2 OR ISRC3)
+	query := fmt.Sprintf("isrc:(%s)", strings.Join(isrcQueries, " OR "))
+
+	u, err := url.Parse(fmt.Sprintf("%s/recording", c.baseURL))
+	if err != nil {
+		c.Log.Errorf("Error parsing URL for bulk ISRC search: %v", err)
+		return resp, fmt.Errorf("error parsing URL: %w", err)
+	}
+
+	q := u.Query()
+	q.Add("fmt", "json")
+	q.Add("query", query)
+	q.Add("limit", "100") // Higher limit for bulk search
+	q.Add("inc", "isrcs") // Include ISRC information
+	u.RawQuery = q.Encode()
+
+	c.Log.Debugf("Making bulk ISRC request to URL: %s", u.String())
+
+	// Make the request
+	httpResp, err := c.Get(u)
+	if err != nil {
+		c.Log.Errorf("Error getting bulk recordings: %s", err)
+		return resp, err
+	}
+
+	defer httpResp.Body.Close()
+	bodyBytes, readErr := io.ReadAll(httpResp.Body)
+	if readErr != nil {
+		c.Log.Errorf("Error reading response body: %s", readErr)
+		return resp, readErr
+	}
+
+	c.Log.Debugf("Bulk ISRC response body: %s", string(bodyBytes))
+	err = json.NewDecoder(strings.NewReader(string(bodyBytes))).Decode(&resp)
+	if err != nil {
+		c.Log.Errorf("Error decoding bulk recordings: %s", err)
+		return resp, err
+	}
+
+	// Build ISRC map for easy lookup
+	for _, recording := range resp.Recordings {
+		if recording.ISRCs != nil && len(*recording.ISRCs) > 0 {
+			for _, isrc := range *recording.ISRCs {
+				if _, exists := resp.ISRCMap[isrc]; !exists {
+					resp.ISRCMap[isrc] = []Recording{}
+				}
+				resp.ISRCMap[isrc] = append(resp.ISRCMap[isrc], recording)
+			}
+		}
 	}
 
 	return resp, nil
