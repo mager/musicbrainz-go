@@ -1,12 +1,18 @@
 package musicbrainz
 
 type Relation struct {
-	Type       string          `json:"type"`
-	Attributes []string        `json:"attributes"`
-	TargetType string          `json:"target-type"`
-	Artist     *RelationArtist `json:"artist,omitempty"`
-	Work       *RelationWork   `json:"work,omitempty"`
-	URL        URL             `json:"url,omitempty"`
+	Type       string           `json:"type"`
+	Attributes []string         `json:"attributes"`
+	TargetType string           `json:"target-type"`
+	Artist     *RelationArtist  `json:"artist,omitempty"`
+	Work       *RelationWork    `json:"work,omitempty"`
+	Recording  *RelationRecording `json:"recording,omitempty"`
+	URL        URL              `json:"url,omitempty"`
+}
+
+type RelationRecording struct {
+	ID    string `json:"id"`
+	Title string `json:"title"`
 }
 
 type RelationArtist struct {
