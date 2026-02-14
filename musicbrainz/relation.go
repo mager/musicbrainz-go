@@ -11,8 +11,9 @@ type Relation struct {
 }
 
 type RelationRecording struct {
-	ID    string `json:"id"`
-	Title string `json:"title"`
+	ID            string          `json:"id"`
+	Title         string          `json:"title"`
+	ArtistCredits *[]ArtistCredit `json:"artist-credit,omitempty"`
 }
 
 type RelationArtist struct {
