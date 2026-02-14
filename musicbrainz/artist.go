@@ -67,6 +67,9 @@ func (c *MusicbrainzClient) GetArtist(req GetArtistRequest) (GetArtistResponse, 
 	if IncludesContains(req.Includes, "work-rels") {
 		incs = append(incs, "work-rels")
 	}
+	if IncludesContains(req.Includes, "artist-credits") {
+		incs = append(incs, "artist-credits")
+	}
 	if len(incs) > 0 {
 		q.Add("inc", strings.Join(incs, "+"))
 	}
